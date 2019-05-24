@@ -1,21 +1,5 @@
 import Mock from 'mockjs'
 
-//  匹配字符串
-function param2Obj (url) {
-  const search = url.split('?')[1]
-  if (!search) {
-    return {}
-  }
-  return JSON.parse(
-    '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"') +
-      '"}'
-  )
-}
-
 let list = []
 const count = 12
 
@@ -47,9 +31,10 @@ for (let i = 0; i < count; i++) {
 
 export default {
   addClass (config) {
-    const { className, classSize, classTeacher } = param2Obj(config.url)
+    const { className, classSize, classTeacher } = JSON.parse(config.body)
     list.push({
-      classNo: '@increment(20190)',
+      id: list[list.length - 1].id + 1,
+      classNo: list[list.length - 1].classNo + 1,
       className: className,
       classSize: classSize,
       classTeacher: classTeacher
@@ -62,26 +47,20 @@ export default {
     }
   },
   deleteClass (config) {
-    const { classNo } = param2Obj(config.url)
-    if (!classNo) {
-      return {
-        code: -999,
-        message: '参数不正确'
-      }
-    } else {
-      list = list.filter(item => item.classNo !== classNo)
-      return {
-        code: 20000,
-        data: {
-          message: '删除成功'
-        }
+    const { id } = JSON.parse(config.body)
+    list = list.filter(item => item.id !== parseInt(id))
+    return {
+      code: 20000,
+      data: {
+        message: '删除成功'
       }
     }
   },
   updateClass (config) {
-    const { classNo, className, classSize, classTeacher } = param2Obj(config.url)
+    let classInfo = JSON.parse(config.body)
+    const { id, className, classSize, classTeacher } = classInfo
     list.some(item => {
-      if (item.classNo === classNo) {
+      if (item.id === id) {
         item.className = className
         item.classSize = classSize
         item.classTeacher = classTeacher
@@ -95,17 +74,16 @@ export default {
     }
   },
   getClassList (config) {
-    const { name, page = 1, limit = 20 } = param2Obj(config.url)
-    const mockList = list.filter(item => {
-      if (name && item.name.indexOf(name) === -1) return false
-      return true
-    })
+    let { queryStr, page = 1, limit = 10 } = JSON.parse(config.body)
+    //  计算总数
+    const mockList = queryStr.length > 0 ? list.filter(item => item.className.includes(queryStr)) : list
+
+    //  数据分页
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
     return {
       code: 20000,
       count: mockList.length,
       data: pageList
     }
-  },
-  searchClass (config) {}
+  }
 }
