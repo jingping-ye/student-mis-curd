@@ -8,34 +8,30 @@ Mock.setup({
   timeout: '300 - 600'
 })
 
-// 班级的增删改查
+/** ******************* 班级的增删改查************************* **/
 
 //  新增班级信息
-Mock.mock(/\/class\/add/, 'get', Class.addClass)
+Mock.mock(/\/class\/add/, 'post', Class.addClass)
 
 //  删除班级信息
-Mock.mock(/\/class\/delete/, 'get', Class.deleteClass)
+Mock.mock(/\/class\/delete/, 'post', Class.deleteClass)
 
 //  更新班级信息
-Mock.mock(/\/class\/update/, 'get', Class.updateClass)
+Mock.mock(/\/class\/update/, 'post', Class.updateClass)
 
 //  获取班级列表
-Mock.mock(/\/class\/list/, 'get', Class.getClassList)
+Mock.mock(/\/class\/list/, 'post', Class.getClassList)
 
-//  根据班级名称查询班级信息
-Mock.mock(/\/class\/search/, 'get', Class.searchClass)
+/** ******************* 班级的增删改查************************* **/
 
-//  学生的增删改查
-Mock.mock(/\/student\/add/, 'get', Student.addStudent)
+//  新增学生
+Mock.mock(/\/student\/add/, 'post', Student.addStudent)
 
 //  删除学生信息
-Mock.mock(/\/student\/delete/, 'get', Student.deleteStudent)
+Mock.mock(/\/student\/delete/, 'post', Student.deleteStudent)
 
 //  更新学生信息
-Mock.mock(/\/student\/update/, 'get', Student.updateStudent)
+Mock.mock(/\/student\/update/, 'post', Student.updateStudent)
 
 //  获取学生列表
-Mock.mock(/\/student\/list/, 'get', Student.getStudentList)
-
-//  根据学生名称查询学生信息
-Mock.mock(/\/student\/search/, 'get', Student.searchStudent)
+Mock.mock(/\/student\/list/, 'post', Student.getStudentList)

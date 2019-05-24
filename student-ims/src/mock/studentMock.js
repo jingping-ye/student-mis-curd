@@ -1,23 +1,7 @@
 import Mock from 'mockjs'
 
-//  解析url
-function param2Obj (url) {
-  const search = url.split('?')[1]
-  if (!search) {
-    return {}
-  }
-  return JSON.parse(
-    '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"') +
-      '"}'
-  )
-}
-
 let list = []
-const count = 12
+const count = 100
 
 for (let i = 0; i < count; i++) {
   list.push(
@@ -35,26 +19,57 @@ for (let i = 0; i < count; i++) {
 
 export default {
   addStudent (config) {
-    const { name, page = 1, limit = 20 } = param2Obj(config.url)
-    const mockList = list.filter(user => {
-      if (name && user.name.indexOf(name) === -1) return false
-      return true
+    const { classNo, stuBirthday, stuGender, stuName, stuPhone } = JSON.parse(config.body)
+    list.push({
+      id: list[list.length - 1].id + 1,
+      stuNo: list[list.length - 1].stuNo + 1,
+      classNo: classNo,
+      stuBirthday: stuBirthday,
+      stuGender: stuGender,
+      stuName: stuName,
+      stuPhone: stuPhone
     })
-    const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
     return {
       code: 20000,
-      count: mockList.length,
-      data: pageList
+      data: {
+        message: '添加成功'
+      }
     }
   },
-  deleteStudent (config) {},
-  updateStudent (config) {},
-  getStudentList (config) {
-    const { name, page = 1, limit = 20 } = param2Obj(config.url)
-    const mockList = list.filter(item => {
-      if (name && item.name.indexOf(name) === -1) return false
-      return true
+  deleteStudent (config) {
+    const { id } = JSON.parse(config.body)
+    list = list.filter(item => item.id !== parseInt(id))
+    return {
+      code: 20000,
+      data: {
+        message: '删除成功'
+      }
+    }
+  },
+  updateStudent (config) {
+    const { id, classNo, stuBirthday, stuGender, stuName, stuPhone } = JSON.parse(config.body)
+    list.some(item => {
+      if (item.id === id) {
+        item.classNo = classNo
+        item.stuBirthday = stuBirthday
+        item.stuGender = stuGender
+        item.stuName = stuName
+        item.stuPhone = stuPhone
+      }
     })
+    return {
+      code: 20000,
+      data: {
+        message: '更新成功'
+      }
+    }
+  },
+  getStudentList (config) {
+    let { queryStr, page = 1, limit = 10 } = JSON.parse(config.body)
+    //  计算总数
+    const mockList = queryStr.length > 0 ? list.filter(item => item.stuName.includes(queryStr)) : list
+
+    //  数据分页
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
     return {
       code: 20000,
