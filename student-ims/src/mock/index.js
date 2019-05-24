@@ -8,7 +8,7 @@ Mock.setup({
   timeout: '300 - 600'
 })
 
-// 班级的增删改查
+/** ******************* 班级的增删改查************************* **/
 
 //  新增班级信息
 Mock.mock(/\/class\/add/, 'post', Class.addClass)
@@ -22,7 +22,9 @@ Mock.mock(/\/class\/update/, 'post', Class.updateClass)
 //  获取班级列表
 Mock.mock(/\/class\/list/, 'post', Class.getClassList)
 
-//  学生的增删改查
+/** ******************* 班级的增删改查************************* **/
+
+//  新增学生
 Mock.mock(/\/student\/add/, 'post', Student.addStudent)
 
 //  删除学生信息

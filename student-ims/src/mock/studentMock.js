@@ -47,8 +47,7 @@ export default {
     }
   },
   updateStudent (config) {
-    let classInfo = JSON.parse(config.body)
-    const { id, classNo, stuBirthday, stuGender, stuName, stuPhone } = classInfo
+    const { id, classNo, stuBirthday, stuGender, stuName, stuPhone } = JSON.parse(config.body)
     list.some(item => {
       if (item.id === id) {
         item.classNo = classNo

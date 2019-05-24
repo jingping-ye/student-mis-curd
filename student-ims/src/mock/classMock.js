@@ -57,8 +57,7 @@ export default {
     }
   },
   updateClass (config) {
-    let classInfo = JSON.parse(config.body)
-    const { id, className, classSize, classTeacher } = classInfo
+    const { id, className, classSize, classTeacher } = JSON.parse(config.body)
     list.some(item => {
       if (item.id === id) {
         item.className = className

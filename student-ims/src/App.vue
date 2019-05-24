@@ -5,7 +5,7 @@
         <base-header></base-header>
       </el-header>
       <el-container>
-        <el-aside class="nav">
+        <el-aside>
           <nav-menu>
           </nav-menu>
         </el-aside>
@@ -28,7 +28,6 @@ export default {
   }
 }
 </script>
-
 <style>
 @import url("./styles/reset.css");
 #app {
@@ -39,20 +38,17 @@ export default {
   color: #2c3e50;
 }
 .header {
-  text-align: center;
-  font-size: 18px;
+  line-height: 60px;
+  margin-bottom: 10px;
   box-shadow: 0 5px 15px -10px #ccc;
   -moz-box-shadow: 0 5px 15px -10px #ccc;
   -webkit-box-shadow: 0 5px 15px -10px #ccc;
-  padding-top: 20px;
-  margin-bottom: 10px;
 }
 .container {
+  min-height: 400px;
+  margin: 3px 10px 10px 0px;
+  box-shadow: -1px 0px 5px #ccc;
   -moz-box-shadow: -1px 0px 5px #ccc;
   -webkit-box-shadow: -1px 0px 5px #ccc;
-  box-shadow: -1px 0px 5px #ccc;
-  margin-right: 10px;
-  min-height: 400px;
-  margin-top: 3px;
 }
 </style>

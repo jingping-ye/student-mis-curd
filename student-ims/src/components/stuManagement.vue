@@ -1,11 +1,5 @@
 <template>
-  <!--TODO
-  1. 字段校验:进一步的校验，限制范围
-  2. 去掉不必要的新增显示字段:比如学号，改变后台自动生成
-  3. 优化相关字段：前后台 界面上是否允许修改，比如学号是不允许修改的
-  4. el-date-picker 返回值格式
-  -->
-  <div class="class-management">
+  <div class="stu-management">
     <!--顶部操作区-->
     <div class="operate-area">
       <div class="search-area">
@@ -22,23 +16,22 @@
             @click="getTableData(true)"></el-button>
         </el-input>
       </div>
-      <el-button class="add-class-btn"
+      <el-button class="add-stu-btn"
         type="primary"
         :loading="status.rest.add"
-        @click="addClass()"
+        @click="addStu()"
         size="medium">新增学生</el-button>
     </div>
     <!--新增班级对话框-->
     <el-dialog title="新增学生"
-      width="500px"
-      height="300px"
+      width="400px"
       :visible.sync="visible"
       :close-on-click-modal="false"
       @close="closeDialog"
       @closed="closedDialog"
       @open="openDialog">
       <div>
-        <el-form label-width="10em"
+        <el-form label-width="6em"
           ref="ruleForm"
           :model="formData"
           :rules="rules">
@@ -89,8 +82,7 @@
                 value-format="yyyy-MM-dd"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="
-                24"
+          <el-col :span="24"
             style="height: 58px">
             <el-form-item label="所属班级"
               prop="classNo">
@@ -112,7 +104,7 @@
           <el-button @click="cancelAdd"
             size="small">取 消</el-button>
           <el-button type="primary"
-            @click="submitStudent"
+            @click="submitStu"
             size="small">确 定</el-button>
         </span>
       </div>
@@ -331,7 +323,7 @@ export default {
     closedDialog () {
       this.resetForm()
     },
-    addClass () {
+    addStu () {
       this.visible = true
     },
     cancelAdd () {
@@ -352,7 +344,7 @@ export default {
         .then(res => {
           this.pager.total = res.data.count
           this.tableData = res.data.data
-          this.tableDataCache = JSON.parse(JSON.stringify(this.tableData))
+          sessionStorage['studentData'] = JSON.stringify(this.tableData)
           //  重置状态
           this.resetStatus()
           for (let i = 0, len = this.tableData.length; i < len; i++) {
@@ -386,10 +378,7 @@ export default {
             .post('/api/student/delete', params)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message({
-                  type: 'success',
-                  message: '删除成功!'
-                })
+                this.$message.success('删除成功!')
                 this.$set(this.status.rest.save, index, false)
                 this.$set(this.status.onEdit, index, 0)
                 this.getTableData(false)
@@ -401,10 +390,7 @@ export default {
             })
         })
         .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+          this.$message.info('已取消删除!')
         })
     },
     updateList (row, index, onEdit) {
@@ -425,10 +411,7 @@ export default {
           .post('/api/student/update', row)
           .then(res => {
             if (res.data.code === 20000) {
-              this.$message({
-                type: 'success',
-                message: '更新成功'
-              })
+              this.$message.success('更新成功')
               this.$set(this.status.rest.save, index, false)
               this.$set(this.status.onEdit, index, 0)
             }
@@ -441,23 +424,20 @@ export default {
     },
     cancelUpdate (row, index) {
       this.$set(this.status.onEdit, index, 0)
-      this.tableData[index] = this.tableDataCache[index]
+      this.tableData[index] = JSON.parse(sessionStorage['studentData'])[index]
     },
     handleCurrentChange (val) {
       this.pager.currentPage = val
       this.getTableData(false)
     },
-    submitStudent () {
+    submitStu () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.$http
             .post(`/api/student/add`, this.formData)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message({
-                  type: 'success',
-                  message: '添加成功!'
-                })
+                this.$message.success('添加成功!')
                 this.visible = false
                 this.resetForm()
                 this.getTableData(true)
@@ -488,10 +468,7 @@ export default {
     validateFields (itemName, itemData) {
       if (itemName === 'stuName') {
         if (itemData.length < 2) {
-          this.$message({
-            type: 'warning',
-            message: '姓名必须在2个字以上!'
-          })
+          this.$message.warning('姓名必须在2个字以上!')
           return false
         }
         return true
@@ -499,10 +476,7 @@ export default {
       if (itemName === 'stuPhone') {
         const isPhone = this.isPoneAvailable(itemData)
         if (!isPhone) {
-          this.$message({
-            type: 'warning',
-            message: '请输入正确的11位手机号!'
-          })
+          this.$message.warning('请输入正确的11位手机号!')
           return false
         }
         return true
@@ -520,7 +494,7 @@ export default {
 }
 </script>
 <style scoped>
-.add-class-btn {
+.add-stu-btn {
   float: right;
   margin-bottom: 10px;
 }

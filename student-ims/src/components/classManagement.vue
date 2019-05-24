@@ -24,8 +24,7 @@
     </div>
     <!--新增班级对话框-->
     <el-dialog title="新增班级"
-      width="500px"
-      height="300px"
+      width="400px"
       :visible.sync="visible"
       :close-on-click-modal="false"
       @close="closeDialog"
@@ -117,10 +116,9 @@
         <template slot-scope="scope">
           <el-input v-if="status.onEdit[scope.$index]"
             resize="none"
-            maxlength="3"
             placeholder="请输入班级人数"
             :autosize="{ minRows: 1, maxRows: 3 }"
-            v-model="scope.row.classSize"
+            v-model.number="scope.row.classSize"
             @blur="validateFields('classSize',scope.row.classSize)">
           </el-input>
           <span v-else>{{scope.row.classSize}}</span>
@@ -280,7 +278,7 @@ export default {
         .then(res => {
           this.pager.total = res.data.count
           this.tableData = res.data.data
-          this.tableDataCache = JSON.parse(JSON.stringify(this.tableData))
+          sessionStorage['classData'] = JSON.stringify(this.tableData)
           //  重置状态
           this.resetStatus()
           for (let i = 0, len = this.tableData.length; i < len; i++) {
@@ -314,10 +312,7 @@ export default {
             .post('/api/class/delete', params)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message({
-                  type: 'success',
-                  message: '删除成功!'
-                })
+                this.$message.success('删除成功!')
                 this.$set(this.status.rest.save, index, false)
                 this.$set(this.status.onEdit, index, 0)
                 this.getTableData(false)
@@ -329,10 +324,7 @@ export default {
             })
         })
         .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+          this.$message.info('已取消删除!')
         })
     },
     //  更新
@@ -356,10 +348,7 @@ export default {
           .post('/api/class/update', row)
           .then(res => {
             if (res.data.code === 20000) {
-              this.$message({
-                type: 'success',
-                message: '更新成功'
-              })
+              this.$message.success('更新成功!')
               this.$set(this.status.rest.save, index, false)
               this.$set(this.status.onEdit, index, 0)
             }
@@ -372,7 +361,7 @@ export default {
     },
     cancelUpdate (row, index) {
       this.$set(this.status.onEdit, index, 0)
-      this.tableData[index] = this.tableDataCache[index]
+      this.tableData[index] = JSON.parse(sessionStorage['classData'])[index]
     },
     handleCurrentChange (val) {
       this.pager.currentPage = val
@@ -385,10 +374,7 @@ export default {
             .post(`/api/class/add`, this.formData)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message({
-                  type: 'sucsess',
-                  message: '添加成功!'
-                })
+                this.$message.success('添加成功!')
                 this.visible = false
                 this.resetForm()
                 this.getTableData(true)
@@ -417,10 +403,7 @@ export default {
     validateFields (itemName, itemData) {
       if (itemName === 'className') {
         if (itemData.length < 2) {
-          this.$message({
-            type: 'warning',
-            message: '班级名称必须在2个字以上!'
-          })
+          this.$message.warning('班级名称必须在2个字以上!')
           return false
         }
         return true
@@ -428,19 +411,10 @@ export default {
 
       if (itemName === 'classSize') {
         if (itemData.length === 0) {
-          this.$message({
-            type: 'warning',
-            message: '请填写班级人数!'
-          })
+          this.$message.warning('请填写班级人数!')
           return false
-        } else if (
-          itemData.length > 0 &&
-          (parseInt(itemData) < 30 || parseInt(itemData) > 40)
-        ) {
-          this.$message({
-            type: 'warning',
-            message: '班级人数范围为30-40人'
-          })
+        } else if (!/^3\d{1}|40$/.test(itemData)) {
+          this.$message.warning('班级人数范围为30-40人')
           return false
         } else {
           return true
@@ -449,10 +423,7 @@ export default {
 
       if (itemName === 'classTeacher') {
         if (itemData.length < 2) {
-          this.$message({
-            type: 'warning',
-            message: '班主任名称必须在2个字以上!'
-          })
+          this.$message.warning('班主任名称必须在2个字以上!')
           return false
         }
         return true
