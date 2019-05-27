@@ -11,22 +11,22 @@ export default {
   data () {
     return {
       activeIndex: '1'
-    }
+    };
   },
   methods: {
     handleSelect (key, keyPath) {
       if (parseInt(key) === 1) {
         this.$router.push({
           name: 'ClassManagement'
-        })
+        });
       } else {
         this.$router.push({
           name: 'StuManagement'
-        })
+        });
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .el-menu {

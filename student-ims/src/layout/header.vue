@@ -8,10 +8,10 @@
 export default {
   name: 'base-header',
   data () {
-    return {}
+    return {};
   },
   methods: {}
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -297,72 +297,72 @@ export default {
           }
         ]
       }
-    }
+    };
   },
   computed: {
     options () {
-      const classOption = []
+      const classOption = [];
       for (let i = 0; i < 12; i++) {
         classOption.push({
           value: 201901 + parseInt(i),
           label: 201900 + parseInt(i)
-        })
+        });
       }
-      return classOption
+      return classOption;
     }
   },
   watch: {},
   mounted () {
-    this.getTableData(true)
+    this.getTableData(true);
   },
   methods: {
     openDialog () {},
     closeDialog () {
-      this.visible = false
+      this.visible = false;
     },
     closedDialog () {
-      this.resetForm()
+      this.resetForm();
     },
     addStu () {
-      this.visible = true
+      this.visible = true;
     },
     cancelAdd () {
-      this.visible = false
+      this.visible = false;
     },
     getTableData (needReset) {
-      this.status.tableLoading = true
+      this.status.tableLoading = true;
       if (needReset) {
-        this.pager.currentPage = 1
+        this.pager.currentPage = 1;
       }
       const params = {
         page: this.pager.currentPage,
         limit: this.pager.pageSize,
         queryStr: this.searchCondition
-      }
+      };
       this.$http
         .post('/api/student/list', params)
         .then(res => {
-          this.pager.total = res.data.count
-          this.tableData = res.data.data
-          this.tableDataCache = JSON.stringify(res.data.data)
+          this.pager.total = res.data.count;
+          this.tableData = res.data.data;
+          this.tableDataCache = JSON.stringify(res.data.data);
 
           //  重置状态
-          this.resetStatus()
+          this.resetStatus();
           for (let i = 0, len = this.tableData.length; i < len; i++) {
-            this.status.onEdit = [...this.status.onEdit, 0]
-            this.status.rest.save = [...this.status.rest.save, false]
+            this.status.onEdit = [...this.status.onEdit, 0];
+            this.status.rest.save = [...this.status.rest.save, false];
           }
-          this.status.tableLoading = false
+          this.status.tableLoading = false;
         })
         .catch(e => {
-          console.log(e)
-          this.status.tableLoading = false
-        })
+          console.log(e);
+          this.status.tableLoading = false;
+        });
     },
     clearQueryCondition () {
       if (!this.searchCondition) {
-        this.pager.currentPage = 1
-        this.getTableData(false)
+        this.pager.currentPage = 1;
+        this.getTableData(false);
       }
     },
     delStu (row, index) {
@@ -374,64 +374,64 @@ export default {
         .then(() => {
           const params = {
             id: row.id
-          }
+          };
           this.$http
             .post('/api/student/delete', params)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message.success('删除成功!')
-                this.$set(this.status.rest.save, index, false)
-                this.$set(this.status.onEdit, index, 0)
-                this.getTableData(false)
+                this.$message.success('删除成功!');
+                this.$set(this.status.rest.save, index, false);
+                this.$set(this.status.onEdit, index, 0);
+                this.getTableData(false);
               }
             })
             .catch(e => {
-              this.$set(this.status.rest.save, index, false)
-              console.log(e)
-            })
+              this.$set(this.status.rest.save, index, false);
+              console.log(e);
+            });
         })
         .catch(() => {
-          this.$message.info('已取消删除!')
-        })
+          this.$message.info('已取消删除!');
+        });
     },
     updateList (row, index, onEdit) {
       if (!onEdit) {
-        this.$set(this.status.onEdit, index, 1)
+        this.$set(this.status.onEdit, index, 1);
       } else {
         //  数据校验
         const validateRes =
           this.validateFields('stuName', row['stuName']) &&
-          this.validateFields('stuPhone', row['stuPhone'])
+          this.validateFields('stuPhone', row['stuPhone']);
         if (!validateRes) {
-          return false
+          return false;
         }
         //  状态管理
-        this.status.rest.save[index] = true
+        this.status.rest.save[index] = true;
         //  数据提交
         this.$http
           .post('/api/student/update', row)
           .then(res => {
             if (res.data.code === 20000) {
-              this.$message.success('更新成功')
-              this.$set(this.status.rest.save, index, false)
-              this.$set(this.status.onEdit, index, 0)
+              this.$message.success('更新成功');
+              this.$set(this.status.rest.save, index, false);
+              this.$set(this.status.onEdit, index, 0);
             }
           })
           .catch(e => {
-            this.$set(this.status.rest.save, index, false)
-            console.log(e)
-          })
+            this.$set(this.status.rest.save, index, false);
+            console.log(e);
+          });
       }
     },
     cancelUpdate (row, index) {
-      this.$set(this.status.onEdit, index, 0)
+      this.$set(this.status.onEdit, index, 0);
       this.tableData[index] = JSON.parse(
         JSON.stringify(this.tableDataCache[index])
-      )
+      );
     },
     handleCurrentChange (val) {
-      this.pager.currentPage = val
-      this.getTableData(false)
+      this.pager.currentPage = val;
+      this.getTableData(false);
     },
     submitStu () {
       this.$refs.ruleForm.validate(valid => {
@@ -440,19 +440,19 @@ export default {
             .post(`/api/student/add`, this.formData)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message.success('添加成功!')
-                this.visible = false
-                this.resetForm()
-                this.getTableData(true)
+                this.$message.success('添加成功!');
+                this.visible = false;
+                this.resetForm();
+                this.getTableData(true);
               }
             })
             .catch(e => {
-              console.log(e)
-            })
+              console.log(e);
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     resetForm () {
       this.formData = {
@@ -461,40 +461,40 @@ export default {
         stuPhone: null,
         stuBirthday: new Date(),
         classNo: null
-      }
-      this.$refs.ruleForm.resetFields()
+      };
+      this.$refs.ruleForm.resetFields();
     },
     resetStatus () {
-      this.status.onEdit = []
-      this.status.rest.save = []
+      this.status.onEdit = [];
+      this.status.rest.save = [];
     },
     validateFields (itemName, itemData) {
       if (itemName === 'stuName') {
         if (itemData.length < 2) {
-          this.$message.warning('姓名必须在2个字以上!')
-          return false
+          this.$message.warning('姓名必须在2个字以上!');
+          return false;
         }
-        return true
+        return true;
       }
       if (itemName === 'stuPhone') {
-        const isPhone = this.isPoneAvailable(itemData)
+        const isPhone = this.isPoneAvailable(itemData);
         if (!isPhone) {
-          this.$message.warning('请输入正确的11位手机号!')
-          return false
+          this.$message.warning('请输入正确的11位手机号!');
+          return false;
         }
-        return true
+        return true;
       }
     },
     isPoneAvailable (phoneNumber) {
-      const myreg = /^[1][3,4,5,7,8][0-9]{9}$/
+      const myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
       if (!myreg.test(parseInt(phoneNumber))) {
-        return false
+        return false;
       } else {
-        return true
+        return true;
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .add-stu-btn {

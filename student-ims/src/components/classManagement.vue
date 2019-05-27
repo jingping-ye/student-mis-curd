@@ -242,61 +242,61 @@ export default {
           }
         ]
       }
-    }
+    };
   },
   computed: {},
   watch: {},
   mounted () {
-    this.getTableData(true)
+    this.getTableData(true);
   },
   methods: {
     openDialog () {},
     closeDialog () {
-      this.visible = false
+      this.visible = false;
     },
     closedDialog () {
-      this.resetForm()
+      this.resetForm();
     },
     addClass () {
-      this.visible = true
+      this.visible = true;
     },
     cancelAdd () {
-      this.visible = false
+      this.visible = false;
     },
     getTableData (needReset) {
-      this.status.tableLoading = true
+      this.status.tableLoading = true;
       if (needReset) {
-        this.pager.currentPage = 1
+        this.pager.currentPage = 1;
       }
       const params = {
         page: this.pager.currentPage,
         limit: this.pager.pageSize,
         queryStr: this.searchCondition
-      }
+      };
       this.$http
         .post('/api/class/list', params)
         .then(res => {
-          this.pager.total = res.data.count
-          this.tableData = res.data.data
-          this.tableDataCache = JSON.parse(JSON.stringify(this.tableData))
+          this.pager.total = res.data.count;
+          this.tableData = res.data.data;
+          this.tableDataCache = JSON.parse(JSON.stringify(this.tableData));
 
           //  重置状态
-          this.resetStatus()
+          this.resetStatus();
           for (let i = 0, len = this.tableData.length; i < len; i++) {
-            this.status.onEdit = [...this.status.onEdit, 0]
-            this.status.rest.save = [...this.status.rest.save, false]
+            this.status.onEdit = [...this.status.onEdit, 0];
+            this.status.rest.save = [...this.status.rest.save, false];
           }
-          this.status.tableLoading = false
+          this.status.tableLoading = false;
         })
         .catch(e => {
-          console.log(e)
-          this.status.tableLoading = false
-        })
+          console.log(e);
+          this.status.tableLoading = false;
+        });
     },
     clearQueryCondition () {
       if (!this.searchCondition) {
-        this.pager.currentPage = 1
-        this.getTableData(false)
+        this.pager.currentPage = 1;
+        this.getTableData(false);
       }
     },
     delClass (row, index) {
@@ -308,68 +308,67 @@ export default {
         .then(() => {
           const params = {
             id: row.id
-          }
+          };
           this.$http
             .post('/api/class/delete', params)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message.success('删除成功!')
-                this.$set(this.status.rest.save, index, false)
-                this.$set(this.status.onEdit, index, 0)
-                this.getTableData(false)
+                this.$message.success('删除成功!');
+                this.$set(this.status.rest.save, index, false);
+                this.$set(this.status.onEdit, index, 0);
+                this.getTableData(false);
               }
             })
             .catch(e => {
-              this.$set(this.status.rest.save, index, false)
-              console.log(e)
-            })
+              this.$set(this.status.rest.save, index, false);
+              console.log(e);
+            });
         })
         .catch(() => {
-          this.$message.info('已取消删除!')
-        })
+          this.$message.info('已取消删除!');
+        });
     },
     //  更新
     updateList (row, index, onEdit) {
       if (!onEdit) {
-        this.$set(this.status.onEdit, index, 1)
+        this.$set(this.status.onEdit, index, 1);
       } else {
         //  校验数据
         const validateRes =
           this.validateFields('className', row['className']) &&
           this.validateFields('classSize', row['classSize']) &&
-          this.validateFields('classTeacher', row['classTeacher'])
+          this.validateFields('classTeacher', row['classTeacher']);
         if (!validateRes) {
-          return false
+          return false;
         }
         //  状态管理
-        this.status.rest.save[index] = true
+        this.status.rest.save[index] = true;
 
         //  提交数据
         this.$http
           .post('/api/class/update', row)
           .then(res => {
             if (res.data.code === 20000) {
-              this.$message.success('更新成功!')
-              this.$set(this.status.rest.save, index, false)
-              this.$set(this.status.onEdit, index, 0)
+              this.$message.success('更新成功!');
+              this.$set(this.status.rest.save, index, false);
+              this.$set(this.status.onEdit, index, 0);
             }
           })
           .catch(e => {
-            this.$set(this.status.rest.save, index, false)
-            console.log(e)
-          })
+            this.$set(this.status.rest.save, index, false);
+            console.log(e);
+          });
       }
     },
     cancelUpdate (row, index) {
-      this.$set(this.status.onEdit, index, 0)
-      this.tableData[index] = this.tableDataCache[index]
+      this.$set(this.status.onEdit, index, 0);
       this.tableData[index] = JSON.parse(
         JSON.stringify(this.tableDataCache[index])
-      )
+      );
     },
     handleCurrentChange (val) {
-      this.pager.currentPage = val
-      this.getTableData(false)
+      this.pager.currentPage = val;
+      this.getTableData(false);
     },
     submitClass () {
       this.$refs.ruleForm.validate(valid => {
@@ -378,63 +377,63 @@ export default {
             .post(`/api/class/add`, this.formData)
             .then(res => {
               if (res.data.code === 20000) {
-                this.$message.success('添加成功!')
-                this.visible = false
-                this.resetForm()
-                this.getTableData(true)
+                this.$message.success('添加成功!');
+                this.visible = false;
+                this.resetForm();
+                this.getTableData(true);
               }
             })
             .catch(e => {
-              console.log(e)
-            })
+              console.log(e);
+            });
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     resetForm () {
       this.formData = {
         className: null,
         classSize: null,
         classTeacher: null
-      }
-      this.$refs.ruleForm.resetFields()
+      };
+      this.$refs.ruleForm.resetFields();
     },
     resetStatus () {
-      this.status.onEdit = []
-      this.status.rest.save = []
+      this.status.onEdit = [];
+      this.status.rest.save = [];
     },
     validateFields (itemName, itemData) {
       if (itemName === 'className') {
         if (itemData.length < 2) {
-          this.$message.warning('班级名称必须在2个字以上!')
-          return false
+          this.$message.warning('班级名称必须在2个字以上!');
+          return false;
         }
-        return true
+        return true;
       }
 
       if (itemName === 'classSize') {
         if (itemData.length === 0) {
-          this.$message.warning('请填写班级人数!')
-          return false
+          this.$message.warning('请填写班级人数!');
+          return false;
         } else if (!/^3\d{1}|40$/.test(itemData)) {
-          this.$message.warning('班级人数范围为30-40人')
-          return false
+          this.$message.warning('班级人数范围为30-40人');
+          return false;
         } else {
-          return true
+          return true;
         }
       }
 
       if (itemName === 'classTeacher') {
         if (itemData.length < 2) {
-          this.$message.warning('班主任名称必须在2个字以上!')
-          return false
+          this.$message.warning('班主任名称必须在2个字以上!');
+          return false;
         }
-        return true
+        return true;
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .add-class-btn {

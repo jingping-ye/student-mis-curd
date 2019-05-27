@@ -26,7 +26,7 @@ export default {
     BaseHeader,
     NavMenu
   }
-}
+};
 </script>
 <style>
 @import url("./styles/reset.css");
