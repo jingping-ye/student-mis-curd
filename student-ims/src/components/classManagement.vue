@@ -278,7 +278,8 @@ export default {
         .then(res => {
           this.pager.total = res.data.count
           this.tableData = res.data.data
-          sessionStorage['classData'] = JSON.stringify(this.tableData)
+          this.tableDataCache = JSON.parse(JSON.stringify(this.tableData))
+
           //  重置状态
           this.resetStatus()
           for (let i = 0, len = this.tableData.length; i < len; i++) {
@@ -361,7 +362,10 @@ export default {
     },
     cancelUpdate (row, index) {
       this.$set(this.status.onEdit, index, 0)
-      this.tableData[index] = JSON.parse(sessionStorage['classData'])[index]
+      this.tableData[index] = this.tableDataCache[index]
+      this.tableData[index] = JSON.parse(
+        JSON.stringify(this.tableDataCache[index])
+      )
     },
     handleCurrentChange (val) {
       this.pager.currentPage = val
